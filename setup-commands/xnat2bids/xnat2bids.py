@@ -181,6 +181,7 @@ def getSubjectForBidsScans(bidsScanList):
 def copyScanBidsFiles(destDirBase, bidsScanList):
     # First make all the "anat", "func", etc. subdirectories that we will need
     for subDir in {scan.subDir for scan in bidsScanList}:
+        print(subDir)
         os.mkdir(os.path.join(destDirBase, subDir))
 
     # Now go through all the scans and copy their files into the correct subdirectory
@@ -231,6 +232,8 @@ else:
         else:
             print("No BIDS data found in session {}.".format(subSessionDir))
 
+print(bidsSubjectMap)
+
 print("")
 
 if not bidsSubjectMap:
@@ -244,6 +247,7 @@ for bidsSubject in bidsSubjectMap.itervalues():
     allHaveSessions = allHaveSessions and bidsSubject.hasSessions()
     allHaveScans = allHaveScans and bidsSubject.hasScans()
 
+print (allHaveSessions)
 if not (allHaveSessions ^ allHaveScans):
     print("ERROR: Somehow we have a mix of subjects with explicit sessions and subjects without explicit sessions. We must have either all subjects with sessions, or all subjects without. They cannot be mixed.")
     sys.exit(1)
@@ -255,9 +259,10 @@ for bidsSubject in bidsSubjectMap.itervalues():
 
     if allHaveSessions:
         for bidsSession in bidsSubject.bidsSessions:
-            sessionDir = os.path.join(subjectDir, "ses-" + bidsSession.sessionLabel)
-            os.mkdir(sessionDir)
-            copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
+            #sessionDir = os.path.join(subjectDir, "ses-" + bidsSession.sessionLabel)
+            #os.mkdir(sessionDir)
+            #copyScanBidsFiles(sessionDir, bidsSession.bidsScans)
+            copyScanBidsFiles(subjectDir, bidsSession.bidsScans) ### modif to avoid the ses- directory level
     else:
         copyScanBidsFiles(subjectDir, bidsSubject.bidsScans)
 
